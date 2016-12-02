@@ -12,7 +12,7 @@ bole.output({ level: 'info', stream: process.stdout });
 var token = process.env.SLACK_API_TOKEN || '';
 assert(token, 'you must supply a slack api token in process.env.SLACK_API_TOKEN');
 var channelID = process.env.SLACK_CHANNEL;
-assert(channelID, 'you must supply a slack channel ID in process.env.SLACK_CHANNEL');
+assert(channelID, 'you must supply a slack channel ID or name in process.env.SLACK_CHANNEL');
 var port = process.env.PORT || '6666';
 
 // This is how we post to slack.
@@ -81,12 +81,12 @@ server.on('hook', function onIncomingHook(hook)
 		].join('\n');
 	}
 
-	web.chat.postMessage(channelID, message);
+	web.chat.postMessage(channelID, message, {"as_user": true});
 });
 
 server.on('hook:error', function(message)
 {
-	web.chat.postMessage(channelID, '*error handling web hook:* ' + message);
+	web.chat.postMessage(channelID, '*error handling web hook:* ' + message, {"as_user": true});
 });
 
 // now make it ready for production
@@ -105,5 +105,5 @@ server.get('/ping', function handlePing(request, response, next)
 server.listen(port, function()
 {
 	logger.info('listening on ' + port);
-	web.chat.postMessage(channelID, 'npm hooks slackbot coming on line beep boop');
+	web.chat.postMessage(channelID, 'npm hooks slackbot coming on line beep boop', {"as_user": true});
 });
